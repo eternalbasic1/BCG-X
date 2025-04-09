@@ -1,3 +1,4 @@
+#price_optimization/settings.py
 """
 Django settings for price_optimization project.
 
