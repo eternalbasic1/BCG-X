@@ -1,7 +1,7 @@
 // src/components/product/ProductList.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGetProductsQuery } from "../../services/api";
+import { useGetProductsQuery } from "../../api/productApi";
 
 const ProductList: React.FC = () => {
   const { data: products, isLoading, error } = useGetProductsQuery();

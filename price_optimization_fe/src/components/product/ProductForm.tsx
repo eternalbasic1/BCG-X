@@ -5,7 +5,7 @@ import {
   useGetProductByIdQuery,
   useCreateProductMutation,
   useUpdateProductMutation,
-} from "../../services/api";
+} from "../../api/productApi";
 import { Product } from "../../types";
 
 const ProductForm: React.FC = () => {

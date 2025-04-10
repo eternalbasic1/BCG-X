@@ -1,6 +1,6 @@
 // src/components/pricing/PriceOptimizationList.tsx
 import React, { useState } from "react";
-import { useBulkOptimizePricesQuery } from "../../services/api";
+import { useBulkOptimizePricesQuery } from "../../api/productApi";
 import { Product, PriceOptimizationParams } from "../../types";
 
 const PriceOptimizationList: React.FC = () => {

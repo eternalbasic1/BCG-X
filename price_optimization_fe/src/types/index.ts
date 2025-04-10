@@ -1,4 +1,14 @@
 // src/types/index.ts
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  access: string;
+  refresh: string;
+  user: User;
+}
 
 export interface User {
   id: number;
@@ -91,11 +101,11 @@ export interface DemandVisualizationData {
 }
 
 export interface AuthState {
-  user: UserProfile | null;
+  user: User | null;
   token: string | null;
   isAuthenticated: boolean;
+  isLoading: boolean;
   error: string | null;
-  loading: boolean;
 }
 
 export interface AuthCredentials {

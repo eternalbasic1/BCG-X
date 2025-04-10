@@ -5,7 +5,7 @@ import { AuthCredentials, AuthResponse, RegisterRequest, User } from "../types";
 
 export const authApi = createApi({
   reducerPath: "authApi",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8000/auth/" }),
+  baseQuery: fetchBaseQuery({ baseUrl: "http://:8000/auth/" }),
   endpoints: (builder) => ({
     login: builder.mutation<AuthResponse, AuthCredentials>({
       query: (credentials) => ({

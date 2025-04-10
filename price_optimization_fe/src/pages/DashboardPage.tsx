@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useGetProductsQuery } from "../services/api";
+import { useGetProductsQuery } from "../api/productApi";
 
 const DashboardPage: React.FC = () => {
   const { data: productsData, isLoading } = useGetProductsQuery();

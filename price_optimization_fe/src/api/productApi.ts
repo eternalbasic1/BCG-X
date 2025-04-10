@@ -1,7 +1,5 @@
 // src/api/productApi.ts
-
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { RootState } from "../app/store";
+import { apiSlice } from "./apiSlice";
 import {
   Product,
   ProductDetail,
@@ -14,32 +12,7 @@ import {
   DemandVisualizationData,
 } from "../types";
 
-// Define a base query with authentication headers
-export const baseQuery = fetchBaseQuery({
-  baseUrl: "http://127.0.0.1:8000/",
-  prepareHeaders: (headers, { getState }) => {
-    // Get the token from the auth state
-    const token = (getState() as RootState).auth.token;
-
-    // If we have a token, include it in the Authorization header
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
-    }
-
-    return headers;
-  },
-});
-
-// Create the API service
-export const api = createApi({
-  reducerPath: "api",
-  baseQuery,
-  tagTypes: [
-    "Products",
-    "ProductHistory",
-    "MarketConditions",
-    "OptimizationLogs",
-  ],
+export const productApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // Products
     getProducts: builder.query<Product[], void>({
@@ -218,4 +191,4 @@ export const {
   useBulkOptimizePricesQuery,
   useGetOptimizationLogsQuery,
   useGetVisualizationDataQuery,
-} = api;
+} = productApi;

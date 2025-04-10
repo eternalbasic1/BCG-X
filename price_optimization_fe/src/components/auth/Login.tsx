@@ -1,38 +1,55 @@
-// src/components/auth/Login.tsx
-
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useLoginMutation } from "../../services/authApi";
-import { useAppDispatch } from "../../app/hooks";
-import { loginSuccess, loginFailure } from "../../features/auth/authSlice";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useLoginMutation } from "../../api/authApi";
+import { setToken, setUser } from "../../utils/authUtils";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { setCredentials } from "../../features/auth/authSlice";
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [login, { isLoading, error }] = useLoginMutation();
-  const dispatch = useAppDispatch();
+
+  const [login, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const dispatch = useAppDispatch();
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
+  // This effect handles redirection after authentication state changes
+  useEffect(() => {
+    if (isAuthenticated) {
+      // Navigate to the intended location or dashboard
+      const from = location.state?.from?.pathname || "/dashboard";
+      console.log("Auth state changed, redirecting to:", from);
+      navigate(from, { replace: true });
+    }
+  }, [isAuthenticated, navigate, location]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Attempting login with:", { username, password });
 
     try {
-      const result = await login({ username, password }).unwrap();
+      const response = await login({ username, password }).unwrap();
+      console.log("Login successful:", response);
+
+      // Store the token in localStorage
+      setToken(response.access);
+      setUser(response.user);
+      // Update Redux state - IMPORTANT: Uncommented this!
       dispatch(
-        loginSuccess({
-          token: result.access,
-          user: result.user,
+        setCredentials({
+          user: response.user,
+          token: response.access,
         })
       );
-      navigate("/dashboard");
+
+      // NOTE: Removed direct navigation here - it's now handled by the useEffect above
+      // This prevents race conditions between state updates and navigation
     } catch (err) {
-      const errorMessage = error
-        ? (error as any).data?.detail || "Login failed"
-        : "Login failed";
-      dispatch(loginFailure(errorMessage));
+      console.error("Login unwrap error:", err);
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
@@ -77,13 +94,6 @@ const Login: React.FC = () => {
               />
             </div>
           </div>
-
-          {error && (
-            <div className="text-red-500 text-sm">
-              {(error as any).data?.detail ||
-                "Login failed. Please check your credentials."}
-            </div>
-          )}
 
           <div>
             <button

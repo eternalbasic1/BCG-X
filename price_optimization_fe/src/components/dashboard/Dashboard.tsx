@@ -1,6 +1,6 @@
 import React from "react";
 import Card from "../common/Card";
-import { useGetProductsQuery } from "../../services/api";
+import { useGetProductsQuery } from "../../api/productApi";
 
 const Dashboard: React.FC = () => {
   const { data: products, isLoading } = useGetProductsQuery();

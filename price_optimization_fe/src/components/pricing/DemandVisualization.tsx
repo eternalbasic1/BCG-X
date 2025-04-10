@@ -19,7 +19,7 @@ import {
 import {
   useGetVisualizationDataQuery,
   useGetProductsQuery,
-} from "../../services/api";
+} from "../../api/productApi";
 
 interface DemandVisualizationProps {
   productId?: number;

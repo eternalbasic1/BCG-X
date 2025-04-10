@@ -177,4 +177,13 @@ SIMPLE_JWT = {
 }
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = True 
+# ✅ Disable open-all-origins since you're using credentials
+CORS_ALLOW_ALL_ORIGINS = False
+
+# ✅ Explicitly allow your frontend origin
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+]
+
+# ✅ Required for cookies/auth headers to be sent
+CORS_ALLOW_CREDENTIALS = True

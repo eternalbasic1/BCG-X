@@ -1,87 +1,58 @@
 // src/features/auth/authSlice.ts
-
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AuthState, UserProfile } from "../../types";
+import { User, AuthState } from "../../types";
+import { authApi } from "../../api/authApi";
+import { clearAuthData, getToken, getUser } from "../../utils/authUtils";
 
-// Function to load state from localStorage
-const loadAuthState = (): AuthState => {
-  try {
-    const serializedToken = localStorage.getItem("token");
-    const serializedUser = localStorage.getItem("user");
-
-    if (serializedToken && serializedUser) {
-      return {
-        token: JSON.parse(serializedToken),
-        user: JSON.parse(serializedUser),
-        isAuthenticated: true,
-        error: null,
-        loading: false,
-      };
-    }
-  } catch (e) {
-    console.log("Error loading auth state from localStorage", e);
-  }
-
-  return {
-    token: null,
-    user: null,
-    isAuthenticated: false,
-    error: null,
-    loading: false,
-  };
+const initialState: AuthState = {
+  user: getUser(),
+  token: getToken(),
+  isAuthenticated: !!getToken(),
+  isLoading: false,
+  error: null,
 };
-
-// Initial state with loaded data from localStorage
-const initialState: AuthState = loadAuthState();
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    loginStart: (state) => {
-      state.loading = true;
-      state.error = null;
-    },
-    loginSuccess: (
-      state,
-      action: PayloadAction<{ token: string; user: UserProfile }>
-    ) => {
-      state.loading = false;
-      state.isAuthenticated = true;
-      state.token = action.payload.token;
-      state.user = action.payload.user;
-
-      // Save to localStorage
-      localStorage.setItem("token", JSON.stringify(action.payload.token));
-      localStorage.setItem("user", JSON.stringify(action.payload.user));
-    },
-    loginFailure: (state, action: PayloadAction<string>) => {
-      state.loading = false;
-      state.error = action.payload;
-      state.isAuthenticated = false;
-      state.token = null;
-      state.user = null;
-    },
     logout: (state) => {
-      state.isAuthenticated = false;
-      state.token = null;
       state.user = null;
-      state.error = null;
-
-      // Clear localStorage
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+      state.token = null;
+      state.isAuthenticated = false;
+      clearAuthData();
     },
-    updateToken: (state, action: PayloadAction<string>) => {
-      state.token = action.payload;
-
-      // Update localStorage
-      localStorage.setItem("token", JSON.stringify(action.payload));
+    setCredentials: (
+      state,
+      action: PayloadAction<{ user: User; token: string }>
+    ) => {
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+      state.isAuthenticated = true;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      // Handle login success
+      .addMatcher(
+        authApi.endpoints.login.matchFulfilled,
+        (state, { payload }) => {
+          state.token = payload.access;
+          state.isAuthenticated = true;
+          state.error = null;
+        }
+      )
+      // Handle login error
+      .addMatcher(
+        authApi.endpoints.login.matchRejected,
+        (state, { payload }) => {
+          // You might need to cast payload if TypeScript can't infer its type correctly
+          const errorPayload = payload as { data?: { error?: string } };
+          state.error = errorPayload?.data?.error || "Authentication failed";
+        }
+      );
   },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout, updateToken } =
-  authSlice.actions;
-
+export const { logout, setCredentials } = authSlice.actions;
 export default authSlice.reducer;

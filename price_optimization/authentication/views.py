@@ -1,7 +1,11 @@
 # authentication/views.py
+from django.conf import settings
 from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.contrib.auth import authenticate
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.models import User, Group, Permission
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter
@@ -17,8 +21,55 @@ from .serializers import (
     UserRoleSerializer
 )
 
-class CustomTokenObtainPairView(TokenObtainPairView):
-    serializer_class = CustomTokenObtainPairSerializer
+class CustomTokenObtainPairView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+
+        user = authenticate(request, username=username, password=password)
+
+        if user:
+            if not user.is_active:
+                return Response(
+                    {"error": "Email is not verified"},
+                    status=status.HTTP_403_FORBIDDEN
+                )
+
+            refresh = RefreshToken.for_user(user)
+
+            # Optional: Attach custom claims to access token
+            try:
+                user_type = user.profile.user_type
+            except UserProfile.DoesNotExist:
+                user_type = "unknown"
+
+            access_token = refresh.access_token
+            access_token["username"] = user.username
+            access_token["email"] = user.email
+            access_token["user_type"] = user_type
+
+            response = Response({
+                "access": str(access_token),
+                "user": UserSerializer(user).data
+            })
+
+            # Set the refresh token as an HttpOnly cookie
+            response.set_cookie(
+                key="refresh_token",
+                value=str(refresh),
+                max_age=7 * 24 * 3600,  # 7 days
+                httponly=True,
+                secure=not settings.DEBUG,
+                samesite="Lax",
+                path="/auth/"
+            )
+
+            return response
+
+        return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
+    
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
