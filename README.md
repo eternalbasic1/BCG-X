@@ -163,7 +163,7 @@ frontend/
    Edit the `.env` file to include:
 
    ```
-   REACT_APP_API_URL=http://localhost:8000/api
+   VITE_API_BASE_URL=http://localhost:8000/api
    ```
 
 4. **Start the Development Server**
