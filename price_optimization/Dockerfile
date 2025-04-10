@@ -22,6 +22,8 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 # Copy the entire project
 COPY . .
 
+COPY .env . 
+
 # Expose port 8000
 EXPOSE 8000
 
