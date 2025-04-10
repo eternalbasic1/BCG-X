@@ -123,9 +123,23 @@ export interface AuthResponse {
   user: UserProfile;
 }
 
+/**
+ * Parameters for price optimization requests
+ */
 export interface PriceOptimizationParams {
+  /**
+   * Target profit margin (0-1). Default: 0.3
+   */
   margin_target?: number;
+
+  /**
+   * Price sensitivity factor. Higher values mean more elastic demand. Default: 1.0
+   */
   price_sensitivity?: number;
+
+  /**
+   * Whether to consider market conditions. Default: true
+   */
   consider_market?: boolean;
 }
 

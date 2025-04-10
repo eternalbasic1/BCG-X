@@ -115,23 +115,81 @@ export const api = createApi({
     getDemandForecast: builder.query<DemandForecastResponse, number>({
       query: (productId) => `/api/products/${productId}/forecast/`,
     }),
+
+    // Updated to properly handle parameters
     optimizePrice: builder.query<
       PriceOptimizationResponse,
-      { productId: number; params: PriceOptimizationParams }
+      { productId: number; params?: PriceOptimizationParams }
     >({
-      query: ({ productId, params }) => ({
-        url: `/api/products/${productId}/optimize/`,
-        method: "GET",
-        params,
-      }),
+      query: ({ productId, params = {} }) => {
+        // Create query params object
+        const queryParams: Record<string, string | number | boolean> = {};
+
+        // Only add parameters that are explicitly set
+        if (params.margin_target !== undefined) {
+          queryParams.margin_target = params.margin_target;
+        }
+
+        if (params.price_sensitivity !== undefined) {
+          queryParams.price_sensitivity = params.price_sensitivity;
+        }
+
+        if (params.consider_market !== undefined) {
+          // Convert boolean to string "true"/"false" to match backend expectation
+          queryParams.consider_market = params.consider_market;
+        }
+
+        return {
+          url: `/api/products/${productId}/optimize/`,
+          method: "GET",
+          params: queryParams,
+        };
+      },
     }),
-    bulkOptimizePrices: builder.query<Product[], PriceOptimizationParams>({
-      query: (params) => ({
-        url: "/api/products/bulk-optimize/",
-        method: "GET",
-        params,
-      }),
+
+    // Updated to properly handle parameters
+    bulkOptimizePrices: builder.query<
+      Product[],
+      PriceOptimizationParams | void
+    >({
+      query: (params = {}) => {
+        // Create query params object
+        const queryParams: Record<string, string | number> = {};
+
+        // Only add parameters that are explicitly set
+        if (
+          params &&
+          "margin_target" in params &&
+          params.margin_target !== undefined
+        ) {
+          queryParams.margin_target = params.margin_target;
+        }
+
+        if (
+          params &&
+          "price_sensitivity" in params &&
+          params.price_sensitivity !== undefined
+        ) {
+          queryParams.price_sensitivity = params.price_sensitivity;
+        }
+
+        if (
+          params &&
+          "consider_market" in params &&
+          params.consider_market !== undefined
+        ) {
+          // Convert boolean to string "true"/"false" to match backend expectation
+          queryParams.consider_market = params.consider_market.toString();
+        }
+
+        return {
+          url: "/api/products/bulk-optimize/",
+          method: "GET",
+          params: queryParams,
+        };
+      },
     }),
+
     getOptimizationLogs: builder.query<PriceOptimizationLog[], void>({
       query: () => "/api/optimization-logs/",
       providesTags: ["OptimizationLogs"],
