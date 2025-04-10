@@ -8,7 +8,7 @@ import { setCredentials } from "../../features/auth/authSlice";
 const Login: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [, setErrorMsg] = useState("");
 
   const [login, { isLoading }] = useLoginMutation();
   const navigate = useNavigate();
