@@ -13,7 +13,6 @@ class ProductHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductHistory
         fields = '__all__'
-
 class ProductSerializer(serializers.ModelSerializer):
     created_by = UserMinimalSerializer(read_only=True)
     demand_forecast = serializers.IntegerField(read_only=True, required=False)
@@ -24,12 +23,19 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = '__all__'
     
     def create(self, validated_data):
+        # Remove created_by from validated_data if it's somehow included
+        validated_data.pop('created_by', None)
+        
+        # Get the user from context and set it explicitly
         user = self.context['request'].user
+        
+        # Create the product with remaining validated data
         product = Product.objects.create(
             created_by=user,
             **validated_data
         )
         return product
+
 
 # class ProductDetailSerializer(ProductSerializer):
 #     history = ProductHistorySerializer(many=True, read_only=True)

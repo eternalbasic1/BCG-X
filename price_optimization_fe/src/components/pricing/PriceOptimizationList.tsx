@@ -140,13 +140,22 @@ const PriceOptimizationList: React.FC = () => {
                     {product.description}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    $ {product.cost_price.toFixed(1)}
+                    ${" "}
+                    {product.cost_price
+                      ? Number(product.cost_price).toFixed(2)
+                      : "0.00"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    $ {product.selling_price.toFixed(1)}
+                    ${" "}
+                    {product.selling_price
+                      ? Number(product.selling_price).toFixed(2)
+                      : "0.00"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap font-medium text-green-600">
-                    $ {product.optimized_price?.toFixed(2) || "N/A"}
+                    ${" "}
+                    {product.optimized_price
+                      ? Number(product.optimized_price).toFixed(2)
+                      : "0.00"}
                   </td>
                 </tr>
               ))}

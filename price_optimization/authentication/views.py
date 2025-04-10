@@ -26,6 +26,7 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = UserSerializer
 
 class UserListView(generics.ListAPIView):
+    # You can remove queryset because i think get_queryset anyhow overrides
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]

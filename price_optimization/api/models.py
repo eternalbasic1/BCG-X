@@ -39,6 +39,7 @@ class ProductHistory(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
+        # Prevents duplicate history entries for the same product and month.Only one record per product per month is allowed.
         unique_together = ('product', 'month')
         ordering = ['product', 'month']
     

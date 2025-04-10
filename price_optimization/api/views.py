@@ -10,6 +10,8 @@ from django.http import Http404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
+from .pagination import CustomPagination
+
 from .models import Product, ProductHistory, MarketCondition, PriceOptimizationLog
 from .serializers import (
     ProductSerializer, 
@@ -42,6 +44,7 @@ class ProductListAPIView(generics.ListCreateAPIView):
     search_fields = ['name', 'description', 'category']
     ordering_fields = ['name', 'selling_price', 'units_sold', 'customer_rating']
     ordering = ['name']
+    pagination_class = CustomPagination
     # pagination_class = None
     
     def perform_create(self, serializer):
@@ -56,7 +59,8 @@ class ProductDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     
-    def get_object(self, pk):
+    def get_object(self):
+        pk = self.kwargs.get('pk')
         try:
             return Product.objects.get(pk=pk)
         except Product.DoesNotExist:
@@ -173,6 +177,7 @@ class ProductHistoryAPIView(generics.ListCreateAPIView):
     filterset_class = ProductHistoryFilter
     ordering_fields = ['month', 'units_sold', 'selling_price']
     ordering = ['-month']
+    pagination_class = CustomPagination
     # pagination_class = None
 
 class ProductHistoryDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -197,6 +202,7 @@ class MarketConditionAPIView(generics.ListCreateAPIView):
     search_fields = ['name', 'description', 'category']
     ordering_fields = ['name', 'start_date', 'impact_factor']
     ordering = ['-start_date']
+    pagination_class = CustomPagination
     # pagination_class = None
     
     def perform_create(self, serializer):
