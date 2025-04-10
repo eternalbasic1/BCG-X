@@ -5,7 +5,7 @@ import { useAppSelector } from "../app/hooks";
 // You'll need to create this function in your API utilities
 const getHealth = async (): Promise<any> => {
   const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URLL}api/health/`
+    `${import.meta.env.VITE_API_BASE_URL}api/health/`
   );
   if (!response.ok) {
     throw new Error("Backend server is not responding");
