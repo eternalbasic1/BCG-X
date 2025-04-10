@@ -117,6 +117,15 @@ const LoginPage: React.FC = () => {
                 {isLoading ? "Logging in..." : "Sign In"}
               </button>
             </div>
+            <p className="mt-4 text-sm text-center text-gray-600">
+              Not registered?{" "}
+              <span
+                onClick={() => navigate("/register")}
+                className="text-blue-600 hover:underline cursor-pointer"
+              >
+                Click to register
+              </span>
+            </p>
           </form>
         </div>
       </div>

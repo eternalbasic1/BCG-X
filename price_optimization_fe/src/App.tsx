@@ -19,6 +19,7 @@ import ProductsPage from "./pages/ProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
 import DemandForecastPage from "./pages/DemandForecastPage";
 import PriceOptimizationPage from "./pages/PriceOptimizationPage";
+import RegisterPage from "./pages/RegisterPage";
 
 const App: React.FC = () => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
@@ -30,6 +31,13 @@ const App: React.FC = () => {
           path="/login"
           element={
             isAuthenticated ? <Navigate to="/dashboard" /> : <LoginPage />
+          }
+        />
+
+        <Route
+          path="/register"
+          element={
+            isAuthenticated ? <Navigate to="/dashboard" /> : <RegisterPage />
           }
         />
 
