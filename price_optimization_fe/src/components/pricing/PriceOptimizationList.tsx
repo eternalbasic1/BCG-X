@@ -50,43 +50,17 @@ const PriceOptimizationList: React.FC = () => {
         role="alert"
       >
         <strong className="font-bold">Error!</strong>
-        <span className="block sm:inline"> Failed to optimize prices.</span>
+        <span className="block sm:inline">
+          {" "}
+          Unauthorized/Failed to optimize prices.
+        </span>
       </div>
     );
   }
 
   // Mock data for display purposes
-  const mockOptimizedProducts: Product[] = [
-    {
-      product_id: 1,
-      name: "Gio - Note Pad",
-      description:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tpor incididun labodolore.",
-      cost_price: 1.2,
-      selling_price: 2.7,
-      category: "Stationary",
-      stock_available: 121213,
-      units_sold: 131244,
-      created_at: "2023-01-01",
-      updated_at: "2023-01-01",
-      optimized_price: 1.01,
-    },
-    {
-      product_id: 2,
-      name: "Jazz - Sticky Notes",
-      description: "Sed do eiusmod tpor incididun.",
-      cost_price: 2.5,
-      selling_price: 3.3,
-      category: "Stationary",
-      stock_available: 21200,
-      units_sold: 653121,
-      created_at: "2023-01-01",
-      updated_at: "2023-01-01",
-      optimized_price: 1.3,
-    },
-  ];
 
-  const displayProducts = optimizedProducts || mockOptimizedProducts;
+  const displayProducts = optimizedProducts || [];
 
   return (
     <div className="bg-white rounded-lg shadow">

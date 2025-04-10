@@ -213,3 +213,31 @@ class AssignRoleView(APIView):
                 pass
         
         return Response(UserRoleSerializer(user).data)
+    
+
+
+class CustomTokenRefreshView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        # Get refresh token from the HTTP-only cookie
+        refresh_token = request.COOKIES.get('refresh_token')
+        print("refresh_token", refresh_token)
+        if not refresh_token:
+            return Response({"error": "Refresh token not found"}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        try:
+            # Create refresh token object
+            refresh = RefreshToken(refresh_token)
+            print("vastundhi")
+            # Get new access token
+            data = {
+                'access': str(refresh.access_token)
+            }  
+            response = Response(data)
+            
+            return response
+            
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+        

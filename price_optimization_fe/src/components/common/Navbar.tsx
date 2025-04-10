@@ -3,7 +3,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { logout } from "../../features/auth/authSlice";
+import { authThunks } from "../../features/auth/authThunks";
 
 const Navbar: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
@@ -11,7 +11,7 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(authThunks());
     navigate("/login");
   };
 

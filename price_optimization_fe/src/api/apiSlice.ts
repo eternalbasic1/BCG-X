@@ -28,10 +28,7 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
   let result = await baseQuery(args, api, extraOptions);
 
   // Handle token expiration
-  if (
-    result.error &&
-    (result.error.status === 401 || result.error.status === 403)
-  ) {
+  if (result.error && result.error.status === 401) {
     // Try to refresh token by injecting the skipAuth flag into api.extra
     const refreshResult = await baseQuery(
       {

@@ -3,6 +3,9 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User, AuthState } from "../../types";
 import { authApi } from "../../api/authApi";
 import { clearAuthData, getToken, getUser } from "../../utils/authUtils";
+import { authThunks } from "./authThunks";
+// import { clearOptimizationParameters } from "../optimization/optimizationSlice";
+// import { clearSelectedProduct } from "../product/productSlice";
 
 const initialState: AuthState = {
   user: getUser(),
@@ -21,6 +24,9 @@ const authSlice = createSlice({
       state.token = null;
       state.isAuthenticated = false;
       clearAuthData();
+      authThunks();
+      // clearOptimizationParameters();
+      // clearSelectedProduct();
     },
     setCredentials: (
       state,
