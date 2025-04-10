@@ -1,136 +1,86 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { useLoginMutation } from "../api/authApi";
-import { setToken, setUser } from "../utils/authUtils";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { setCredentials } from "../features/auth/authSlice";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAppSelector } from "../app/hooks";
 
-const LoginPage: React.FC = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
+// You'll need to create this function in your API utilities
+const getHealth = async (): Promise<any> => {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_BASE_URLL}api/health/`
+  );
+  if (!response.ok) {
+    throw new Error("Backend server is not responding");
+  }
+  return response.json();
+};
 
-  const [login, { isLoading }] = useLoginMutation();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const dispatch = useAppDispatch();
+const HomePage: React.FC = () => {
+  const [loading, setLoading] = useState(true);
   const { isAuthenticated } = useAppSelector((state) => state.auth);
+  const navigate = useNavigate();
 
-  // This effect handles redirection after authentication state changes
   useEffect(() => {
+    // Redirect to dashboard if already logged in
     if (isAuthenticated) {
-      // Navigate to the intended location or dashboard
-      const from = location.state?.from?.pathname || "/dashboard";
-      console.log("Auth state changed, redirecting to:", from);
-      navigate(from, { replace: true });
+      navigate("/dashboard");
+      return;
     }
-  }, [isAuthenticated, navigate, location]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMsg("");
-    console.log("Attempting login with:", { username, password });
-
-    try {
-      const response = await login({ username, password }).unwrap();
-      console.log("Login successful:", response);
-
-      // Store the token in localStorage
-      setToken(response.access);
-      setUser(response.user);
-      // Update Redux state - IMPORTANT: Uncommented this!
-      dispatch(
-        setCredentials({
-          user: response.user,
-          token: response.access,
-        })
-      );
-
-      // NOTE: Removed direct navigation here - it's now handled by the useEffect above
-      // This prevents race conditions between state updates and navigation
-    } catch (err) {
-      console.error("Login unwrap error:", err);
-
-      if (err && typeof err === "object" && "data" in err) {
-        const errorData = err.data as any;
-        setErrorMsg(
-          errorData?.error ||
-            errorData?.detail ||
-            errorData?.non_field_errors?.[0] ||
-            "Login failed. Please check your credentials."
-        );
-      } else {
-        setErrorMsg("Network error. Please try again.");
+    const fetchHealth = async () => {
+      try {
+        await getHealth();
+        setLoading(false);
+      } catch (error) {
+        console.error("Error connecting to the backend:", error);
+        // Still set loading to false after a timeout to allow user interaction
+        setTimeout(() => setLoading(false), 10000);
       }
-    }
-  };
+    };
+
+    fetchHealth();
+  }, [isAuthenticated, navigate]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="bg-blue-600 p-6">
-          <h2 className="text-xl font-bold text-white text-center">
+    <div className="flex justify-center items-center w-screen h-screen bg-gray-100">
+      {loading ? (
+        <div className="flex flex-col items-center p-8 bg-white rounded-lg shadow-lg">
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">
             Price Optimization Tool
           </h2>
+          <p className="text-xl font-medium text-gray-800 text-center">
+            Please wait a moment, we're getting things ready for you.
+          </p>
+          <p className="mt-2 text-sm text-gray-600 text-center max-w-md">
+            As this app is hosted on a free tier service, it may take a minute
+            to wake up from its cold start state. Your application will be up
+            and running soon.
+          </p>
+          <span className="block mt-4 w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></span>
         </div>
-        <div className="p-6">
-          <h3 className="text-xl font-semibold mb-4 text-center">Login</h3>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="username"
-              >
-                Username
-              </label>
-              <input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                required
-              />
-            </div>
-            <div className="mb-6">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2"
-                htmlFor="password"
-              >
-                Password
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                required
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                {isLoading ? "Logging in..." : "Sign In"}
+      ) : (
+        <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md text-center">
+          <h1 className="text-3xl font-bold text-gray-900">
+            Price Optimization Tool
+          </h1>
+          <p className="mt-3 text-gray-600">
+            Make data-driven pricing decisions to maximize your revenue and
+            profitability.
+          </p>
+          <div className="mt-6 space-y-3">
+            <Link to="/login">
+              <button className="w-full px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
+                Login
               </button>
-            </div>
-            <p className="mt-4 text-sm text-center text-gray-600">
-              Not registered?{" "}
-              <span
-                onClick={() => navigate("/register")}
-                className="text-blue-600 hover:underline cursor-pointer"
-              >
-                Click to register
-              </span>
-            </p>
-          </form>
+            </Link>
+            <Link to="/register">
+              <button className="w-full px-6 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition">
+                Register
+              </button>
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
 
-export default LoginPage;
+export default HomePage;

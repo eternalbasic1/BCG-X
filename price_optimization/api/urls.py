@@ -12,7 +12,8 @@ from .views import (
     MarketConditionAPIView,
     MarketConditionDetailAPIView,
     PriceOptimizationLogAPIView,
-    DemandVisualizationDataAPIView
+    DemandVisualizationDataAPIView,
+    health_check
 )
 
 urlpatterns = [
@@ -36,4 +37,5 @@ urlpatterns = [
     
     # Visualization data endpoints
     path('products/<int:pk>/visualization-data/', DemandVisualizationDataAPIView.as_view(), name='visualization-data'),
+    path('health/', health_check, name='health_check'),
 ]

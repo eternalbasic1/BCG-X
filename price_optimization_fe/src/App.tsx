@@ -1,4 +1,4 @@
-import React from "react";
+import React, { JSX } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -19,29 +19,37 @@ import DemandForecastPage from "./pages/DemandForecastPage";
 import PriceOptimizationPage from "./pages/PriceOptimizationPage";
 import RegisterPage from "./pages/RegisterPage";
 import UserManagementPage from "./pages/UserManagementPage";
+import Login from "./components/auth/Login";
 
-const App: React.FC = () => {
+// Auth guard component
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
 
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
+
+const App: React.FC = () => {
   return (
     <Router>
       <Routes>
-        <Route
-          path="/login"
-          element={
-            isAuthenticated ? <Navigate to="/dashboard" /> : <LoginPage />
-          }
-        />
+        {/* Public routes */}
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<RegisterPage />} />
 
+        {/* Protected routes */}
         <Route
-          path="/register"
+          path="/"
           element={
-            isAuthenticated ? <Navigate to="/dashboard" /> : <RegisterPage />
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
           }
-        />
-
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Navigate to="/dashboard" />} />
+        >
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="products" element={<ProductsPage />} />
           <Route path="products/:id" element={<ProductDetailPage />} />

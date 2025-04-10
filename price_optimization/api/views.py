@@ -6,7 +6,7 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 
@@ -281,3 +281,9 @@ class DemandVisualizationDataAPIView(APIView):
             })
         except Product.DoesNotExist:
             raise Http404
+        
+
+
+def health_check(request):
+    # You can include additional health checks here
+    return JsonResponse({"status": "ok", "message": "Service is operational"}, status=200)
