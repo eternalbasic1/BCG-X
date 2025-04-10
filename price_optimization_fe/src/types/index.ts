@@ -19,9 +19,11 @@ export interface User {
 }
 
 export interface UserProfile extends User {
-  user_type: "admin" | "buyer" | "supplier" | "analyst";
-  company?: string;
-  phone?: string;
+  profile: {
+    user_type: "admin" | "buyer" | "supplier" | "analyst";
+    company?: string;
+    phone?: string;
+  };
 }
 
 export interface Product {
@@ -101,7 +103,7 @@ export interface DemandVisualizationData {
 }
 
 export interface AuthState {
-  user: User | null;
+  user: UserProfile | null;
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;

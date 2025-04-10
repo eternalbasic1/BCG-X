@@ -1,11 +1,10 @@
-// src/components/product/ProductList.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useGetProductsQuery } from "../../api/productApi";
 
 const ProductList: React.FC = () => {
   const { data: products, isLoading, error } = useGetProductsQuery();
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const navigate = useNavigate();
 

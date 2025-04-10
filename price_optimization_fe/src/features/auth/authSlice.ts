@@ -1,6 +1,5 @@
-// src/features/auth/authSlice.ts
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { User, AuthState } from "../../types";
+import { User, AuthState, UserProfile } from "../../types";
 import { authApi } from "../../api/authApi";
 import { clearAuthData, getToken, getUser } from "../../utils/authUtils";
 import { authThunks } from "./authThunks";
@@ -30,7 +29,7 @@ const authSlice = createSlice({
     },
     setCredentials: (
       state,
-      action: PayloadAction<{ user: User; token: string }>
+      action: PayloadAction<{ user: UserProfile; token: string }>
     ) => {
       state.user = action.payload.user;
       state.token = action.payload.token;

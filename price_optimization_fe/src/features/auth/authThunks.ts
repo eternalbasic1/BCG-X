@@ -1,4 +1,3 @@
-// src/features/auth/authThunks.ts
 import { AppDispatch } from "../../app/store";
 import { logout as logoutAction } from "./authSlice";
 import { apiSlice } from "../../api/apiSlice";

@@ -1,5 +1,3 @@
-// src/components/common/Sidebar.tsx
-
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { useAppSelector } from "../../app/hooks";
@@ -7,9 +5,10 @@ import { useAppSelector } from "../../app/hooks";
 const Sidebar: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
 
-  const isAdmin = user?.user_type === "admin";
-  const isAnalyst = user?.user_type === "analyst";
-  const canViewPricing = isAdmin || isAnalyst;
+  const isAdmin = user?.profile?.user_type === "admin";
+  const isAnalyst = user?.profile?.user_type === "analyst";
+  const isBuyer = user?.profile?.user_type === "buyer";
+  const canViewPricing = isAdmin || isAnalyst || isBuyer;
 
   return (
     <div className="h-full min-h-screen w-64 bg-gray-800 text-white">
@@ -41,32 +40,32 @@ const Sidebar: React.FC = () => {
             </NavLink>
           </li>
           {canViewPricing && (
-            <>
-              <li>
-                <NavLink
-                  to="/demand-forecast"
-                  className={({ isActive }) =>
-                    `block py-2 px-4 rounded ${
-                      isActive ? "bg-indigo-600" : "hover:bg-gray-700"
-                    }`
-                  }
-                >
-                  Demand Forecast
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
-                  to="/price-optimization"
-                  className={({ isActive }) =>
-                    `block py-2 px-4 rounded ${
-                      isActive ? "bg-indigo-600" : "hover:bg-gray-700"
-                    }`
-                  }
-                >
-                  Price Optimization
-                </NavLink>
-              </li>
-            </>
+            <li>
+              <NavLink
+                to="/demand-forecast"
+                className={({ isActive }) =>
+                  `block py-2 px-4 rounded ${
+                    isActive ? "bg-indigo-600" : "hover:bg-gray-700"
+                  }`
+                }
+              >
+                Demand Forecast
+              </NavLink>
+            </li>
+          )}
+          {canViewPricing && !isBuyer && (
+            <li>
+              <NavLink
+                to="/price-optimization"
+                className={({ isActive }) =>
+                  `block py-2 px-4 rounded ${
+                    isActive ? "bg-indigo-600" : "hover:bg-gray-700"
+                  }`
+                }
+              >
+                Price Optimization
+              </NavLink>
+            </li>
           )}
           {isAdmin && (
             <li>

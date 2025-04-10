@@ -1,5 +1,3 @@
-// src/layouts/MainLayout.tsx
-
 import React from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { useAppSelector } from "../app/hooks";

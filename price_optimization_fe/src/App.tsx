@@ -1,5 +1,3 @@
-// src/App.tsx
-
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -20,6 +18,7 @@ import ProductDetailPage from "./pages/ProductDetailPage";
 import DemandForecastPage from "./pages/DemandForecastPage";
 import PriceOptimizationPage from "./pages/PriceOptimizationPage";
 import RegisterPage from "./pages/RegisterPage";
+import UserManagementPage from "./pages/UserManagementPage";
 
 const App: React.FC = () => {
   const { isAuthenticated } = useAppSelector((state) => state.auth);
@@ -51,6 +50,7 @@ const App: React.FC = () => {
             path="price-optimization"
             element={<PriceOptimizationPage />}
           />
+          <Route path="users" element={<UserManagementPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" />} />

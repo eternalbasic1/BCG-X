@@ -1,4 +1,3 @@
-// src/api/authApi.ts
 import { apiSlice } from "./apiSlice";
 import { LoginRequest, LoginResponse } from "../types";
 

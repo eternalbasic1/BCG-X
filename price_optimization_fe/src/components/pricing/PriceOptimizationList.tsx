@@ -1,11 +1,10 @@
-// src/components/pricing/PriceOptimizationList.tsx
 import React, { useState } from "react";
 import { useBulkOptimizePricesQuery } from "../../api/productApi";
-import { Product, PriceOptimizationParams } from "../../types";
+import { PriceOptimizationParams } from "../../types";
 
 const PriceOptimizationList: React.FC = () => {
   // Optimization parameters
-  const [params, setParams] = useState<PriceOptimizationParams>({
+  const [params] = useState<PriceOptimizationParams>({
     margin_target: 30, // Example default values
     price_sensitivity: 0.7,
     consider_market: true,
@@ -16,24 +15,9 @@ const PriceOptimizationList: React.FC = () => {
     data: optimizedProducts,
     isLoading,
     error,
-    refetch,
   } = useBulkOptimizePricesQuery(params);
 
   // Handle parameter changes
-  const handleParamChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value, type } = e.target;
-    setParams({
-      ...params,
-      [name]:
-        type === "checkbox"
-          ? (e.target as HTMLInputElement).checked
-          : type === "number"
-          ? parseFloat(value)
-          : value,
-    });
-  };
 
   if (isLoading) {
     return (
@@ -135,15 +119,6 @@ const PriceOptimizationList: React.FC = () => {
               ))}
             </tbody>
           </table>
-        </div>
-
-        <div className="flex justify-end mt-6 space-x-4">
-          <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md">
-            Cancel
-          </button>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-            Save
-          </button>
         </div>
       </div>
     </div>

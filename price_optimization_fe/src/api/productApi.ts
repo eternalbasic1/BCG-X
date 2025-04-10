@@ -1,4 +1,3 @@
-// src/api/productApi.ts
 import { apiSlice } from "./apiSlice";
 import {
   Product,

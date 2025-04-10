@@ -1,4 +1,3 @@
-// src/components/pricing/DemandVisualization.tsx
 import React, { useMemo } from "react";
 import {
   LineChart,
